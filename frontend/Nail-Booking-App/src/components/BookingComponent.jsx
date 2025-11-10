@@ -5,10 +5,7 @@ import NailCard from "./NailDetails/NailCard";
 import "./BookingComponent.css";
 
 const BookingComponent = ({ currentUser }) => {
-  const [selectedDates, setSelectedDates] = useState({
-    startDate: null,
-    endDate: null,
-  });
+  const [selectedDate, setSelectedDate] = useState(null);
   const [currentDate, setCurrentDate] = useState(new Date());
   const [filteredNails, setFilteredNails] = useState([]);
   const [isFiltered, setIsFiltered] = useState(false);
@@ -44,28 +41,17 @@ const BookingComponent = ({ currentUser }) => {
   }, []);
 
   const handleDateClick = (day, monthOffset = 0) => {
-    const selectedDate = new Date(
+    const clickedDate = new Date(
       currentDate.getFullYear(),
       currentDate.getMonth() + monthOffset,
       day
     );
 
-    if (!selectedDates.startDate || selectedDates.endDate) {
-      // If no dates are selected or both are already set, reset to a single date
-      setSelectedDates({ startDate: selectedDate, endDate: null });
-    } else if (selectedDate.getTime() === selectedDates.startDate.getTime()) {
-      // If clicking the same date again, treat as a single-day selection
-      setSelectedDates({ startDate: selectedDate, endDate: selectedDate });
+    // If clicking the same date, deselect it; otherwise select the new date
+    if (selectedDate && selectedDate.getTime() === clickedDate.getTime()) {
+      setSelectedDate(null);
     } else {
-      // Set the endDate if selecting a valid range
-      if (selectedDate > selectedDates.startDate) {
-        setSelectedDates({ ...selectedDates, endDate: selectedDate });
-      } else {
-        setSelectedDates({
-          startDate: selectedDate,
-          endDate: selectedDates.startDate,
-        });
-      }
+      setSelectedDate(clickedDate);
     }
 
     setError(""); // Clear any error message on date selection
@@ -114,50 +100,27 @@ const BookingComponent = ({ currentUser }) => {
     );
 
     return (
-      // Check if startDate != null && is the tile, the startDate?
-      (selectedDates.startDate &&
-        selectedDates.startDate.getTime() === date.getTime()) ||
-      // Check if endDate != null && is the tile, the endDate?
-      (selectedDates.endDate &&
-        selectedDates.endDate.getTime() === date.getTime()) ||
-      // Check if startDate && endDate != null && is the tile between the two?
-      (selectedDates.startDate &&
-        selectedDates.endDate &&
-        date >= selectedDates.startDate &&
-        date <= selectedDates.endDate)
+      selectedDate && selectedDate.getTime() === date.getTime()
     );
   };
 
   const days = generateCalendarDays();
 
   const handleFilterNails = () => {
-    if (!selectedDates.startDate) {
-      setError("Please select a valid date.");
+    if (!selectedDate) {
+      setError("Please select a date.");
       setIsFiltered(false);
       return;
     }
 
-    // If endDate is null, fall back to startDate for single-day booking
-    const startDate = selectedDates.startDate;
-    const endDate = selectedDates.endDate || selectedDates.startDate;
-
-    const isDateInRange = (occupiedDate) => {
+    const isDateOccupied = (occupiedDate) => {
       const occupied = new Date(occupiedDate);
       occupied.setHours(0, 0, 0, 0);
-
-      let fallsIntoRange = true;
-
-      if (endDate.getTime() != startDate.getTime()) {
-        fallsIntoRange = occupied >= startDate && occupied <= endDate;
-      } else {
-        fallsIntoRange = occupied.getTime() === startDate.getTime();
-      }
-
-      return fallsIntoRange;
+      return occupied.getTime() === selectedDate.getTime();
     };
 
     const availableNails = nailData.filter((nail) =>
-      nail.occupiedDates.every((occ) => !isDateInRange(occ.date))
+      nail.occupiedDates.every((occ) => !isDateOccupied(occ.date))
     );
 
     setFilteredNails(availableNails);
@@ -172,7 +135,7 @@ const BookingComponent = ({ currentUser }) => {
           <FaArrowLeft></FaArrowLeft>{" "}
         </button>
         <h2>
-          {currentDate.toLocaleString("default", {
+          {currentDate.toLocaleString("en-IE", {
             month: "long",
             year: "numeric",
           })}
@@ -207,10 +170,7 @@ const BookingComponent = ({ currentUser }) => {
           filteredNails.map((nail) => (
             <NailCard
               onBookingSuccess={() => {
-                setSelectedDates({
-                  startDate: null,
-                  endDate: null,
-                });
+                setSelectedDate(null);
                 setFilteredNails([]);
                 setSuccess("Booking Succesful!");
                 setTimeout(() => {
@@ -220,11 +180,11 @@ const BookingComponent = ({ currentUser }) => {
               }}
               key={nail.id}
               nail={nail}
-              selectedDateRange={selectedDates}
+              selectedDateRange={selectedDate ? { startDate: selectedDate, endDate: selectedDate } : null}
             />
           ))
-        ) : isFiltered && selectedDates.startDate ? (
-          <p>No available appointments for the selected dates.</p>
+        ) : isFiltered && selectedDate ? (
+          <p>No available appointments for the selected date.</p>
         ) : success != "" ? (
           <p>{success}</p>
         ) : error != "" ? (

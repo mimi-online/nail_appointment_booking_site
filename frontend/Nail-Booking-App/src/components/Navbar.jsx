@@ -12,7 +12,7 @@ const Navbar = () => {
   }
   return (
     <nav className="navbar">
-      <h1>Nail Appointment Booking</h1>
+      <h1>ManisbyMariya</h1>
       <ul>
         <li>
           <Link to="">Home</Link>

@@ -31,7 +31,7 @@ const AllNails = () => {
   }, []);
   return (
     <div className="all-nails-container">
-      <h2>All nails</h2>
+      <h2>Available Services</h2>
       <div className="nails-list">
         {nailData.map((nail) => (
           <NailCard key={nail.id} nail={nail} />

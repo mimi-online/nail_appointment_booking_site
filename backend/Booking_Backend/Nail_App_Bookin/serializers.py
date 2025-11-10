@@ -42,6 +42,7 @@ class NailSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Nail
         fields = ['url', 'id', 'name', 'images', 'service_type', 'occupiedDates', 'price', 'design', 'description']
+    
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):

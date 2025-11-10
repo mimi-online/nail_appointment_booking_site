@@ -5,10 +5,10 @@ from django.conf import settings
 
 class Nail(models.Model):
     NAIL_TYPES = [
-        ('biab', 'Biab'),
-        ('biab refill', 'Biab Refill'),
-        ('gel polish', 'Gel Polish'),
-        ('gel polish refill', 'Gel Polish Refill')
+        ('Biab', 'Biab'),
+        ('Biab Refill', 'Biab Refill'),
+        ('Gel Polish', 'Gel Polish'),
+        ('Gel Polish Refill', 'Gel Polish Refill')
     ]
 
     DESIGN_TYPE = [

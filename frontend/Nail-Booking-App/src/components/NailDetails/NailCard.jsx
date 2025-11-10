@@ -36,11 +36,7 @@ const NailCard = ({ nail, selectedDateRange, onBookingSuccess }) => {
           body: JSON.stringify({
             nail: nailUrl, // Full URL, e.g., /nails/1/
             user: userUrl, // Full URL, e.g., /users/2/
-            date: currentDate
-              .toLocaleDateString("hu")
-              .replace(/\./g, "-")
-              .replace(/\s+/g, "")
-              .slice(0, -1), // Format date as YYYY-MM-DD
+            date: currentDate.toISOString().split("T")[0], // Format date as YYYY-MM-DD
           }),
         });
         console.log(user);
@@ -48,12 +44,8 @@ const NailCard = ({ nail, selectedDateRange, onBookingSuccess }) => {
         console.log(
           nailUrl,
           userUrl,
-          currentDate
-            .toLocaleDateString("hu")
-            .replace(/\./g, "-")
-            .replace(/\s+/g, "")
-            .slice(0, -1)
-        ); // Format date as YYYY-MM-DD)
+          currentDate.toISOString().split("T")[0]
+        ); // Format date as YYYY-MM-DD
         if (!response.ok) {
           throw new Error("Booking failed");
         }

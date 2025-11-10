@@ -39,8 +39,35 @@ class OccupiedDatesList(generics.ListCreateAPIView):
     def get_queryset(self):
         user = self.request.user
         if not user.is_superuser and not user.is_staff:
-            return OccupiedDates.objects.filter(user=user)
-        return super().get_queryset()
+            return OccupiedDates.objects.filter(user=user).select_related('nail')
+        return OccupiedDates.objects.all().select_related('nail')
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        
+        # Create a mapping of occupied_date IDs to their nail details
+        nail_details_map = {}
+        for occupied_date in queryset:
+            nail = occupied_date.nail
+            nail_details_map[occupied_date.id] = {
+                'id': nail.id,
+                'name': nail.name,
+                'service_type': nail.service_type,
+                'design': nail.design,
+                'price': nail.price
+            }
+        
+        # Enrich response with nail details
+        data = []
+        for item in serializer.data:
+            enriched_item = {
+                **item,
+                'nail_details': nail_details_map.get(item['id'], {})
+            }
+            data.append(enriched_item)
+        
+        return Response(data)
 
 class OccupiedDatesDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = OccupiedDates.objects.all()
