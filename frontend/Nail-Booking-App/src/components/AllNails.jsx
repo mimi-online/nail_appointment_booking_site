@@ -2,6 +2,7 @@ import React from "react";
 import "./AllNails.css";
 import NailCard from "./NailDetails/NailCard";
 import { useState, useEffect } from "react";
+import API_URL from "../config";
 const AllNails = () => {
   const [nailData, setNailData] = useState([]);
 
@@ -9,7 +10,7 @@ const AllNails = () => {
     async function fetchNailData() {
       try {
         const response = await fetch(
-          "http://127.0.0.1:8000/nails/",
+          `${API_URL}/nails/`,
           {
             method: "GET",
           }

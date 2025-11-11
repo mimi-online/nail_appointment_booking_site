@@ -3,6 +3,7 @@ import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 
 import NailCard from "./NailDetails/NailCard";
 import "./BookingComponent.css";
+import API_URL from "../config";
 
 const BookingComponent = ({ currentUser }) => {
   const [selectedDate, setSelectedDate] = useState(null);
@@ -19,7 +20,7 @@ const BookingComponent = ({ currentUser }) => {
     async function fetchNailData() {
       try {
         const response = await fetch(
-          "http://127.0.0.1:8000/nails/",
+          `${API_URL}/nails/`,
           {
             method: "GET",
           }

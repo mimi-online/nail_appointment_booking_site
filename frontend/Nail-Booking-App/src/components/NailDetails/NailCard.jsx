@@ -5,6 +5,7 @@ import NailInfo from "./Nailinfo";
 import "./NailDetails.css";
 import { UserContext } from "../UserContext";
 import { redirect, useNavigate } from "react-router-dom";
+import API_URL from "../../config";
 
 const NailCard = ({ nail, selectedDateRange, onBookingSuccess }) => {
   const { user, setUser } = useContext(UserContext);
@@ -14,9 +15,8 @@ const NailCard = ({ nail, selectedDateRange, onBookingSuccess }) => {
       return navigate("/auth");
     }
     console.log(user.token);
-    const baseURL = "http://127.0.0.1:8000";
-    const nailUrl = `${baseURL}/nails/${nailId}/`;
-    const userUrl = `${baseURL}/users/${userId}/`;
+    const nailUrl = `${API_URL}/nails/${nailId}/`;
+    const userUrl = `${API_URL}/users/${userId}/`;
 
     if (selectedDateRange.startDate && !selectedDateRange.endDate) {
       selectedDateRange.endDate = selectedDateRange.startDate;
@@ -27,7 +27,7 @@ const NailCard = ({ nail, selectedDateRange, onBookingSuccess }) => {
       currentDate.setDate(currentDate.getDate() + 1)
     ) {
       try {
-        const response = await fetch(`${baseURL}/occupied-dates/`, {
+        const response = await fetch(`${API_URL}/occupied-dates/`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

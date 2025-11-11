@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import "./AuthForm.css";
 import { UserContext } from "./UserContext";
 import { useNavigate } from "react-router-dom";
+import API_URL from "../config";
 const AuthForm = () => {
   const { user, setUser } = useContext(UserContext);
   const navigate = useNavigate();
@@ -26,7 +27,7 @@ const AuthForm = () => {
     let userData = formData;
     try {
       const response = await fetch(
-        "http://127.0.0.1:8000/login/",
+        `${API_URL}/login/`,
         {
           method: "POST",
           headers: {
@@ -59,7 +60,7 @@ const AuthForm = () => {
     let userData = formData;
     try {
       const response = await fetch(
-        "http://127.0.0.1:8000/register/",
+        `${API_URL}/register/`,
         {
           method: "POST",
           headers: {

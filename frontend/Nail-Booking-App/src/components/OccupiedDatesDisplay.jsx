@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import "./OccupiedDatesDisplay.css";
 import { UserContext } from "./UserContext";
+import API_URL from "../config";
 
 const OccupiedDatesDisplay = () => {
   const [groupedDates, setGroupedDates] = useState({});
@@ -13,10 +14,9 @@ const OccupiedDatesDisplay = () => {
       return;
     }
 
-    const baseURL = "http://127.0.0.1:8000";
     async function fetchDates() {
       try {
-        const response = await fetch(`${baseURL}/occupied-dates/`, {
+        const response = await fetch(`${API_URL}/occupied-dates/`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
