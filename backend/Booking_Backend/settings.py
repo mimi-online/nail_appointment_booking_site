@@ -28,8 +28,8 @@ if not SECRET_KEY:
 DEBUG = False
 
 ALLOWED_HOSTS = [
-    "https://nailappointmentbooking.onrender.com/",
-    "https://manisbymariya.com/"
+    "nailappointmentbooking.onrender.com",
+    "manisbymariya.com"
     ]
 
 SESSION_COOKIE_SECURE = True
@@ -152,13 +152,13 @@ REST_FRAMEWORK = {
 }
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://nailappointmentbooking.onrender.com/",
-    "https://manisbymariya.com/"
+    "https://nailappointmentbooking.onrender.com",
+    "https://manisbymariya.com"
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    "https://nailappointmentbooking.onrender.com/",
-    "https://manisbymariya.com/"
+    "https://nailappointmentbooking.onrender.com",
+    "https://manisbymariya.com"
 ]
 
 CORS_ALLOW_CREDENTIALS = True
