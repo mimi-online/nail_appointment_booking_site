@@ -153,12 +153,14 @@ REST_FRAMEWORK = {
 
 CSRF_TRUSTED_ORIGINS = [
     "https://nailappointmentbooking.onrender.com",
-    "https://manisbymariya.com"
+    "https://manisbymariya.com",
+    "https://nail-appointment-booking-site.vercel.app"
 ]
 
 CORS_ALLOWED_ORIGINS = [
     "https://nailappointmentbooking.onrender.com",
-    "https://manisbymariya.com"
+    "https://manisbymariya.com",
+    "https://nail-appointment-booking-site.vercel.app"
 ]
 
 CORS_ALLOW_CREDENTIALS = True
