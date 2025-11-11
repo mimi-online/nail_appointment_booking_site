@@ -1,3 +1,5 @@
+gunicorn
+Django>=3.2,<4.0
 asgiref==3.10.0
 dj-database-url==3.0.1
 Django==5.2.8
