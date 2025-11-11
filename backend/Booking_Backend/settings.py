@@ -21,12 +21,19 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-in^)lg*nfg3d#cpg1vjtk9ja^_+o7&beesjg1c!aqt8ae84x&!')
+if not SECRET_KEY:
+    raise ValueError("DJANGO_SECRET_KEY environment variable not set")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = [
+    "https://nailappointmentbooking.onrender.com/",
+    "https://manisbymariya.com/"
+    ]
 
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
 
 # Application definition
 
@@ -145,12 +152,13 @@ REST_FRAMEWORK = {
 }
 
 CSRF_TRUSTED_ORIGINS = [
-    'http://localhost:5173',
-    "http://127.0.0.1:5173"
+    "https://nailappointmentbooking.onrender.com/",
+    "https://manisbymariya.com/"
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    'https://your-frontend-domain.vercel.app', 
+    "https://nailappointmentbooking.onrender.com/",
+    "https://manisbymariya.com/"
 ]
 
 CORS_ALLOW_CREDENTIALS = True
