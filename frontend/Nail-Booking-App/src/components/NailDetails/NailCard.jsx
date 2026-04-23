@@ -7,10 +7,11 @@ import { UserContext } from "../UserContext";
 import { redirect, useNavigate } from "react-router-dom";
 import API_URL from "../../config";
 
-const NailCard = ({ nail, selectedDateRange, onBookingSuccess }) => {
+const NailCard = ({ nail, selectedDateRange, onBookingSuccess, selectedTime, isSelectedService,
+  onSelectService,}) => {
   const { user, setUser } = useContext(UserContext);
   const navigate = useNavigate();
-  const handleBooking = async (nailId, userId, selectedDateRange) => {
+  const handleBooking = async (nailId, userId, selectedDateRange, selectedTime) => {
     if (!user) {
       return navigate("/auth");
     }
@@ -18,6 +19,10 @@ const NailCard = ({ nail, selectedDateRange, onBookingSuccess }) => {
     const nailUrl = `${API_URL}/nails/${nailId}/`;
     const userUrl = `${API_URL}/users/${userId}/`;
 
+    if (!selectedTime) {
+      console.error("Time is required for booking");
+      return;
+    }
     if (selectedDateRange.startDate && !selectedDateRange.endDate) {
       selectedDateRange.endDate = selectedDateRange.startDate;
     }
@@ -37,6 +42,7 @@ const NailCard = ({ nail, selectedDateRange, onBookingSuccess }) => {
             nail: nailUrl, // Full URL, e.g., /nails/1/
             user: userUrl, // Full URL, e.g., /users/2/
             date: currentDate.toISOString().split("T")[0], // Format date as YYYY-MM-DD
+            time: selectedTime,
           }),
         });
         console.log(user);
@@ -61,13 +67,19 @@ const NailCard = ({ nail, selectedDateRange, onBookingSuccess }) => {
     <div className="nail-card">
       <NailImageSlider images={nail.images} />
       <NailInfo nail={nail} />
-      {selectedDateRange ? (
+      {selectedDateRange && !isSelectedService ? (
+        <button className="book-nail-button" onClick={onSelectService}>
+          Choose Service
+        </button>
+      ) : null}
+
+      {selectedDateRange && isSelectedService ? (
         <button
           className="book-nail-button"
           onClick={() =>
-            handleBooking(nail.id, user.user.id, selectedDateRange)
+            handleBooking(nail.id, user.user.id, selectedDateRange, selectedTime)
           }
-          disabled={!selectedDateRange.startDate}
+          disabled={!selectedDateRange.startDate || !selectedTime}
         >
           Book Appointment
         </button>

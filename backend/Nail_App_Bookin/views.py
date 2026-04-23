@@ -38,9 +38,11 @@ class OccupiedDatesList(generics.ListCreateAPIView):
 
     def get_queryset(self):
         user = self.request.user
-        if not user.is_superuser and not user.is_staff:
-            return OccupiedDates.objects.filter(user=user).select_related('nail')
-        return OccupiedDates.objects.all().select_related('nail')
+        if not user.is_authenticated:
+            return OccupiedDates.objects.none()  # Return empty queryset for unauthenticated users
+        if user.is_superuser or user.is_staff:
+            return OccupiedDates.objects.all().select_related('nail')
+        return OccupiedDates.objects.filter(user=user).select_related('nail')
 
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()

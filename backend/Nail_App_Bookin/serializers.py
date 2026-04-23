@@ -32,7 +32,7 @@ class OccupiedDatesSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = OccupiedDates
-        fields = ["url", "id", "nail", "user", "date"]
+        fields = ["url", "id", "nail", "user", "date", "time"]
 
 
 class NailSerializer(serializers.HyperlinkedModelSerializer):
@@ -50,6 +50,17 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
         fields = ['url', 'id', 'username', 'password', 'email', 'full_name']
+        extra_kwargs = {
+            'password': {'write_only': True},
+            'url': {'read_only': True}
+        }
 
     def validate_password(self,value):
         return make_password(value)
+    
+    def create(self, validated_data):
+        if not validated_data.get('username'):
+            validated_data['username'] = validated_data['email']
+        
+        user = User.objects.create(**validated_data)
+        return user

@@ -8,13 +8,24 @@ import API_URL from "../config";
 const BookingComponent = ({ currentUser }) => {
   const [selectedDate, setSelectedDate] = useState(null);
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [selectedTime, setSelectedTime] = useState(null);
   const [filteredNails, setFilteredNails] = useState([]);
+  const [selectedNail, setSelectedNail] = useState(null);
   const [isFiltered, setIsFiltered] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loggedInUser, setLoggedInUser] = useState(currentUser);
-
   const [nailData, setNailData] = useState([]);
+
+  const generateTimeSlots = () => {
+    const slots = [];
+    for (let hour = 9; hour <= 17; hour++) {
+      slots.push(`${hour.toString().padStart(2, "0")}:00`);
+    }
+    return slots;
+  };
+  
+  const timeSlots = generateTimeSlots();
 
   useEffect(() => {
     async function fetchNailData() {
@@ -47,15 +58,37 @@ const BookingComponent = ({ currentUser }) => {
       currentDate.getMonth() + monthOffset,
       day
     );
-
-    // If clicking the same date, deselect it; otherwise select the new date
+  
     if (selectedDate && selectedDate.getTime() === clickedDate.getTime()) {
       setSelectedDate(null);
+      setSelectedNail(null);
+      setSelectedTime(null);
+      setFilteredNails([]);
+      setIsFiltered(false);
     } else {
       setSelectedDate(clickedDate);
+      setSelectedNail(null);
+      setSelectedTime(null);
+      setFilteredNails([]);
+      setIsFiltered(false);
     }
+  
+    setError("");
+  };
 
-    setError(""); // Clear any error message on date selection
+  const handleSelectNail = (nail) => {
+    setSelectedNail(nail);
+    setSelectedTime(null);
+    setError("");
+  };
+
+  const handleTimeClick = (time) => {
+    if (selectedTime === time) {
+      setSelectedTime(null);
+    } else {
+      setSelectedTime(time);
+    }
+    setError("");
   };
 
   const handleMonthChange = (increment) => {
@@ -107,30 +140,52 @@ const BookingComponent = ({ currentUser }) => {
 
   const days = generateCalendarDays();
 
+  const isTimeSlotOccupied = (nail, timeSlot) => {
+    if (!selectedDate) return false;
+    const selectedDateStr = selectedDate.toISOString().split("T")[0];
+  
+    return nail.occupiedDates.some((occ) => {
+      const occDate = occ.date.split("T")[0];
+      return occDate === selectedDateStr && occ.time === timeSlot;
+    });
+  };
+
   const handleFilterNails = () => {
     if (!selectedDate) {
       setError("Please select a date.");
       setIsFiltered(false);
       return;
-    }
+  };
 
-    const isDateOccupied = (occupiedDate) => {
-      const occupied = new Date(occupiedDate);
-      occupied.setHours(0, 0, 0, 0);
-      return occupied.getTime() === selectedDate.getTime();
-    };
+  const isDateOccupied = (occupiedDate) => {
+    const occupied = new Date(occupiedDate);
+    occupied.setHours(0, 0, 0, 0);
+    return occupied.getTime() === selectedDate.getTime();
+  };
 
-    const availableNails = nailData.filter((nail) =>
-      nail.occupiedDates.every((occ) => !isDateOccupied(occ.date))
-    );
+  const availableNails = nailData.filter(
+    (nail) => !isTimeSlotOccupied(nail, selectedTime)
+  );
 
-    setFilteredNails(availableNails);
-    setIsFiltered(true);
-    setError("");
+  setFilteredNails(availableNails);
+  setSelectedNail(null);
+  setSelectedTime(null);
+  setIsFiltered(true);
+  setError("");
+  };
+
+  const isSelectedNailTimeOccupied = (timeSlot) => {
+    if (!selectedDate || !selectedNail) return false;
+    const selectedDateStr = selectedDate.toISOString().split("T")[0];
+
+    return selectedNail.occupiedDates.some((occ) => {
+      const occDate = occ.date.split("T")[0];
+      return occDate === selectedDateStr && occ.time === timeSlot;
+    });
   };
 
   return (
-    <div className="booking-container">
+    <div className="booking-container mt-10">
       <div className="calendar-header">
         <button className="date-switcher" onClick={() => handleMonthChange(-1)}>
           <FaArrowLeft></FaArrowLeft>{" "}
@@ -172,6 +227,8 @@ const BookingComponent = ({ currentUser }) => {
             <NailCard
               onBookingSuccess={() => {
                 setSelectedDate(null);
+                setSelectedNail(null);
+                setSelectedTime(null);
                 setFilteredNails([]);
                 setSuccess("Booking Succesful!");
                 setTimeout(() => {
@@ -182,6 +239,9 @@ const BookingComponent = ({ currentUser }) => {
               key={nail.id}
               nail={nail}
               selectedDateRange={selectedDate ? { startDate: selectedDate, endDate: selectedDate } : null}
+              selectedTime={selectedTime}
+              isSelectedService={selectedNail?.id === nail.id}
+              onSelectService={() => handleSelectNail(nail)}
             />
           ))
         ) : isFiltered && selectedDate ? (
@@ -192,6 +252,23 @@ const BookingComponent = ({ currentUser }) => {
           <p>{error}</p>
         ) : (
           <p>Please select a date for booking.</p>
+        )}
+        {selectedNail && (
+          <div className="time-selection">
+            <h3>Select Time for {selectedNail.name}</h3>
+            <div className="time-slots">
+              {timeSlots.map((time) => (
+                <button
+                  key={time}
+                  className={`time-slot ${selectedTime === time ? "selected" : ""}`}
+                  onClick={() => handleTimeClick(time)}
+                  disabled={isSelectedNailTimeOccupied(time)}
+                >
+                  {time}
+                </button>
+              ))}
+            </div>
+          </div>
         )}
       </div>
     </div>

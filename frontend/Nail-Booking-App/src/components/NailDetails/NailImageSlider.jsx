@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import API_URL from "../../config";
 
 const NailImageSlider = ({ images }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -20,7 +19,7 @@ const NailImageSlider = ({ images }) => {
     <div className="image-slider">
       <button onClick={handlePrev}>&#10094;</button>
       <img
-        src={`${API_URL}${images[currentIndex].image}`}
+        src={images[currentIndex].image}
         alt="Nail"
         className="slider-image"
       />

@@ -1,12 +1,14 @@
 .navbar {
+  font-family: "Big Caslon", "Book Antiqua", "Palatino Linotype", Georgia, serif; font-size: 24px; font-style: normal; font-variant: normal; font-weight: 100; line-height: 26.4px; 
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #333;
+  background-color: black;
   padding: 1rem;
   color: #f8f8f8;
   margin-bottom: 3rem;
   width: 100%;
+  position: relative;
 }
 
 .navbar h1 {
@@ -16,23 +18,92 @@
 .navbar ul {
   margin: 0;
   padding: 0;
-}
-.navbar ul {
   list-style: none;
   display: flex;
   gap: 1rem;
+  align-items: center;
 }
 
 .navbar ul li a {
   color: #f8f8f8;
   text-decoration: none;
+  white-space: nowrap;
 }
 
 .navbar ul li a:hover {
   text-decoration: underline;
 }
 
+.logout {
+  color: #f8f8f8;
+}
+
 .logout:hover {
   text-decoration: underline;
   cursor: pointer;
+}
+
+/* Hamburger menu styles */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  cursor: pointer;
+  gap: 4px;
+}
+
+.hamburger span {
+  width: 25px;
+  height: 3px;
+  background-color: #f8f8f8;
+  transition: 0.3s;
+}
+
+/* Mobile styles */
+@media (max-width: 768px) {
+  .navbar {
+    flex-wrap: wrap;
+  }
+
+  .navbar h1 {
+    font-size: 1.2rem;
+  }
+
+  .hamburger {
+    display: flex;
+  }
+
+  .navbar ul {
+    display: none;
+    flex-direction: column;
+    width: 100%;
+    gap: 0;
+    margin-top: 1rem;
+  }
+
+  .navbar ul.active {
+    display: flex;
+  }
+
+  .navbar ul li {
+    width: 100%;
+    text-align: center;
+    padding: 0.75rem 0;
+    border-top: 1px solid #555;
+  }
+
+  .navbar ul li a {
+    display: block;
+    width: 100%;
+  }
+}
+
+/* Small mobile devices */
+@media (max-width: 480px) {
+  .navbar {
+    padding: 0.75rem;
+  }
+
+  .navbar h1 {
+    font-size: 1rem;
+  }
 }

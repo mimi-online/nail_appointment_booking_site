@@ -25,7 +25,7 @@ class Nail(models.Model):
 
 class NailImage(models.Model):
     image = models.ImageField(upload_to='nail_images/')
-    caption = models.CharField(max_length=255, blank=True,null=True)
+    caption = models.CharField(max_length=255, blank=True, null=True)
     nail = models.ForeignKey(Nail, related_name='images', on_delete=models.CASCADE)
 
     def __str__(self):
@@ -35,6 +35,10 @@ class OccupiedDates(models.Model):
     nail = models.ForeignKey(Nail, on_delete=models.CASCADE, related_name='occupiedDates')
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='booked_dates')
     date = models.DateField()
+    time = models.TimeField(default="12:00")
+
+    class Meta:
+        unique_together = ('nail', 'date', 'time')
 
     def __str__(self):
         return f'{self.date} - {self.nail.name} booked by {self.user.username}'
