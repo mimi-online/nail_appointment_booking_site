@@ -242,6 +242,9 @@ const BookingComponent = ({ currentUser }) => {
               selectedTime={selectedTime}
               isSelectedService={selectedNail?.id === nail.id}
               onSelectService={() => handleSelectNail(nail)}
+              timeSlots={timeSlots}
+              onTimeClick={handleTimeClick}
+              isTimeOccupied={(time) => isSelectedNailTimeOccupied(time)}
             />
           ))
         ) : isFiltered && selectedDate ? (
@@ -252,23 +255,6 @@ const BookingComponent = ({ currentUser }) => {
           <p>{error}</p>
         ) : (
           <p>Please select a date for booking.</p>
-        )}
-        {selectedNail && (
-          <div className="time-selection">
-            <h3>Select Time for {selectedNail.name}</h3>
-            <div className="time-slots">
-              {timeSlots.map((time) => (
-                <button
-                  key={time}
-                  className={`time-slot ${selectedTime === time ? "selected" : ""}`}
-                  onClick={() => handleTimeClick(time)}
-                  disabled={isSelectedNailTimeOccupied(time)}
-                >
-                  {time}
-                </button>
-              ))}
-            </div>
-          </div>
         )}
       </div>
     </div>

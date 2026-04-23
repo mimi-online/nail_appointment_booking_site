@@ -8,7 +8,7 @@ import { redirect, useNavigate } from "react-router-dom";
 import API_URL from "../../config";
 
 const NailCard = ({ nail, selectedDateRange, onBookingSuccess, selectedTime, isSelectedService,
-  onSelectService,}) => {
+  onSelectService, timeSlots, isTimeOccupied, onTimeClick}) => {
   const { user, setUser } = useContext(UserContext);
   const navigate = useNavigate();
   const handleBooking = async (nailId, userId, selectedDateRange, selectedTime) => {
@@ -63,6 +63,7 @@ const NailCard = ({ nail, selectedDateRange, onBookingSuccess, selectedTime, isS
       }
     }
   };
+
   return (
     <div className="nail-card">
       <NailImageSlider images={nail.images} />
@@ -74,18 +75,34 @@ const NailCard = ({ nail, selectedDateRange, onBookingSuccess, selectedTime, isS
       ) : null}
 
       {selectedDateRange && isSelectedService ? (
-        <button
-          className="book-nail-button"
-          onClick={() =>
-            handleBooking(nail.id, user.user.id, selectedDateRange, selectedTime)
-          }
-          disabled={!selectedDateRange.startDate || !selectedTime}
-        >
-          Book Appointment
-        </button>
+        <>
+          <div className="time-selection">
+            <h3>Select a Time</h3>
+            <div className="time-slots">
+              {timeSlots.map((time) => (
+                <button
+                  key={time}
+                  className={`time-slot ${selectedTime === time ? "selected" : ""}`}
+                  onClick={() => onTimeClick(time)}
+                  disabled={isTimeOccupied(time)}
+                >
+                  {time}
+                </button>
+              ))}
+            </div>
+          </div>
+          <button
+            className="book-nail-button"
+            onClick={() => handleBooking(nail.id, user.user.id, selectedDateRange, selectedTime)}
+            disabled={!selectedDateRange.startDate || !selectedTime}
+          >
+            Book Appointment
+          </button>
+        </>
       ) : null}
     </div>
-  );
+);
+
 };
 
 export default NailCard;
